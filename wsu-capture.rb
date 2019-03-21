@@ -4,7 +4,7 @@ require 'flammarion'
 
 def getOutputDir()
   if Gem.win_platform?
-    outputDir = `powershell "Add-Type -AssemblyName System.windows.forms|Out-Null;$f=New-Object System.Windows.Forms.SaveFileDialog;$f.InitialDirectory='%cd%';$f.Filter='All Files (*.*)|*.*';$f.showHelp=$true;$f.ShowDialog()|Out-Null;$f.FileName"`.strip
+    outputDir = `powershell "Add-Type -AssemblyName System.windows.forms|Out-Null;$f=New-Object System.Windows.Forms.FolderBrowserDialog;$f.SelectedPath = "C:\";$f.Description = "Select Output Directory";$f.ShowDialog()|Out-Null;$f.SelectedPath"`.strip
   else
     outputDir = `zenity --file-selection --directory`.strip
   end
