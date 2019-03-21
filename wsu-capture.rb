@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-
+require 'flammarion'
 def previewVideo()
   system('ffmpeg -f lavfi -i life -f nut -vf scale=620X480 - | ffplay -f lavfi "movie=\'pipe\:0\',split=2[a][b],[b]waveform=intensity=0.1:mode=column:mirror=1:c=1:f=lowpass:e=instant:graticule=green:flags=numbers+dots,scale=620x480[bb],[a][bb]hstack[out0]"')
 end
