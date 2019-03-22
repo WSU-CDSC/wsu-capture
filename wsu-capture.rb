@@ -4,11 +4,9 @@ require 'flammarion'
 
 def getOutputDir()
   if Gem.win_platform?
-    @outputDir = `powershell "Add-Type -AssemblyName System.windows.forms|Out-Null;$f=New-Object System.Windows.Forms.FolderBrowserDialog;$f.SelectedPath = 'C:\';$f.Description = 'Select Output Directory';$f.ShowDialog((New-Object System.Windows.Forms.Form -Property @{TopMost = $true }))|Out-Null;$f.SelectedPath"`.strip
-    @outputFile = @outputDir + '\test-ffv1.mkv'
+    @outputDir = `powershell "Add-Type -AssemblyName System.windows.forms|Out-Null;$f=New-Object System.Windows.Forms.FolderBrowserDialog;$f.SelectedPath = 'C:\';$f.Description = 'Select Output Directory';$f.ShowDialog((New-Object System.Windows.Forms.Form -Property @{TopMost = $true }))|Out-Null;$f.SelectedPath"`.strip + '\\'
   else
-    @outputDir = `zenity --file-selection --directory`.strip
-    @outputFile = @outputDir + '/test-ffv1.mkv'
+    @outputDir = `zenity --file-selection --directory`.strip + '/'
   end
 end
 
@@ -22,7 +20,12 @@ def recordVideo()
     getOutputDir()
   end
   outputFileName = $window.gets("Please Enter Output Name")
-  system('ffmpeg -f lavfi -i life -color_primaries smpte170m -color_trc bt709 -colorspace smpte170m -c:a pcm_s16le -c:v ffv1 -level 3 -g 1 -slices 16 -slicecrc 1 -vf setsar=40/27,setdar=4/3,setfield=bff,fieldorder=bff -y ' + @outputFile + ' -f nut -vf setsar=40/27,setdar=4/3 - | ffplay -')
+  outputFile = @outputDir + outputFileName + '.mkv'
+  if File.exist?(outputFile)
+  	$window.alert("A file with that name already exists!")
+  else
+  	system('ffmpeg -f lavfi -i life -color_primaries smpte170m -color_trc bt709 -colorspace smpte170m -c:a pcm_s16le -c:v ffv1 -level 3 -g 1 -slices 16 -slicecrc 1 -vf setsar=40/27,setdar=4/3,setfield=bff,fieldorder=bff -y ' + "'" + outputFile + "'" + ' -f nut -vf setsar=40/27,setdar=4/3 - | ffplay -')
+	end
 end
 
 def openDocs()
@@ -38,6 +41,7 @@ end
 # Create GUI Window
 
 $window = Flammarion::Engraving.new
+$window.image("https://brand.wsu.edu/wp-content/themes/brand/images/pages/logos/wsu-shield-mark.svg")
 $window.title("Welcome to WSU-Capture")
 $window.button("Open Help") { openDocs() }
 $window.button("Choose Save Location") { getOutputDir() }
