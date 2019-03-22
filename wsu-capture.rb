@@ -24,7 +24,7 @@ def recordVideo()
   if File.exist?(outputFile)
   	$window.alert("A file with that name already exists!")
   else
-  	system('ffmpeg -f lavfi -i life -color_primaries smpte170m -color_trc bt709 -colorspace smpte170m -c:a pcm_s16le -c:v ffv1 -level 3 -g 1 -slices 16 -slicecrc 1 -vf setsar=40/27,setdar=4/3,setfield=bff,fieldorder=bff -y ' + "'" + outputFile + "'" + ' -f nut -vf setsar=40/27,setdar=4/3 - | ffplay -')
+  	system('ffmpeg -f lavfi -i life -color_primaries smpte170m -color_trc bt709 -colorspace smpte170m -c:a pcm_s16le -c:v ffv1 -level 3 -g 1 -slices 16 -slicecrc 1 -vf setsar=40/27,setdar=4/3,setfield=bff,fieldorder=bff -y ' + '"' + outputFile + '"' + ' -f nut -vf setsar=40/27,setdar=4/3 - | ffplay -')
 	end
 end
 
