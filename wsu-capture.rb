@@ -17,15 +17,20 @@ def previewVideo()
 end
 
 def recordVideo()
+  if @outputDir.nil?
+    $window.alert("Please select an output location!")
+    getOutputDir()
+  end
+  outputFileName = $window.gets("Please Enter Output Name")
   system('ffmpeg -f lavfi -i life -color_primaries smpte170m -color_trc bt709 -colorspace smpte170m -c:a pcm_s16le -c:v ffv1 -level 3 -g 1 -slices 16 -slicecrc 1 -vf setsar=40/27,setdar=4/3,setfield=bff,fieldorder=bff -y ' + @outputFile + ' -f nut -vf setsar=40/27,setdar=4/3 - | ffplay -')
 end 
 
 # Create GUI Window
-f = Flammarion::Engraving.new
-f.button("Choose Save Location") { getOutputDir() }
-f.button("Preview Video") { previewVideo() }
-f.button("Record Video") { recordVideo() }
-f.wait_until_closed
+$window = Flammarion::Engraving.new
+$window.button("Choose Save Location") { getOutputDir() }
+$window.button("Preview Video") { previewVideo() }
+$window.button("Record Video") { recordVideo() }
+$window.wait_until_closed
 
 
 # Osprey Command
