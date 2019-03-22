@@ -22,6 +22,7 @@ end
 
 # Create GUI Window
 f = Flammarion::Engraving.new
+f.title("Welcome to WSU-Capture")
 f.button("Choose Save Location") { getOutputDir() }
 f.button("Preview Video") { previewVideo() }
 f.button("Record Video") { recordVideo() }
