@@ -18,11 +18,22 @@ end
 
 def recordVideo()
   system('ffmpeg -f lavfi -i life -color_primaries smpte170m -color_trc bt709 -colorspace smpte170m -c:a pcm_s16le -c:v ffv1 -level 3 -g 1 -slices 16 -slicecrc 1 -vf setsar=40/27,setdar=4/3,setfield=bff,fieldorder=bff -y ' + @outputFile + ' -f nut -vf setsar=40/27,setdar=4/3 - | ffplay -')
-end 
+end
+
+def openDocs()
+  if Gem.win_platform?
+    system("start https://github.com/WSU-CDSC/wsu-capture/blob/master/Instructions.md")
+  elsif RUBY_PLATFORM.include?("linux")
+    system("xdg-open https://github.com/WSU-CDSC/wsu-capture/blob/master/Instructions.md")
+  elsif RUBY_PLATFORM.include?("darwin")
+    system("open https://github.com/WSU-CDSC/wsu-capture/blob/master/Instructions.md")
+  end
+end
 
 # Create GUI Window
 f = Flammarion::Engraving.new
 f.title("Welcome to WSU-Capture")
+f.button("Open Help") { openDocs() }
 f.button("Choose Save Location") { getOutputDir() }
 f.button("Preview Video") { previewVideo() }
 f.button("Record Video") { recordVideo() }
