@@ -4,8 +4,8 @@ require 'flammarion'
 
 def getOutputDir()
   if Gem.win_platform?
-    outputDir = `powershell "Add-Type -AssemblyName System.windows.forms|Out-Null;$f=New-Object System.Windows.Forms.SaveFileDialog;$f.InitialDirectory='%cd%';$f.Filter='All Files (*.*)|*.*';$f.showHelp=$true;$f.ShowDialog()|Out-Null;$f.FileName"`.strip
- 	@outputFile = @outputDir + '\test-ffv1.mkv'
+    outputDir = `powershell "Add-Type -AssemblyName System.windows.forms|Out-Null;$f=New-Object System.Windows.Forms.FolderBrowserDialog;$f.SelectedPath = "C:\";$f.Description = "Select Output Directory";$f.ShowDialog((New-Object System.Windows.Forms.Form -Property @{TopMost = $true }))|Out-Null;$f.SelectedPath"`.strip
+    @outputFile = @outputDir + '\test-ffv1.mkv'
   else
     @outputDir = `zenity --file-selection --directory`.strip
     @outputFile = @outputDir + '/test-ffv1.mkv'
