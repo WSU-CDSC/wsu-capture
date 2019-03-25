@@ -11,7 +11,7 @@ def getOutputDir()
 end
 
 def previewVideo()
-  system('.\\ffmpeg -f dshow -pixel_format yuyv422 -i video="Osprey-827e MFI Video Device 1":audio="Unbal Input 1 (Osprey-827e 1)" -f nut -c:v h264 -vf setsar=40/27,setdar=4/3 - | .\\ffplay -f lavfi "movie=\'pipe\:0\',split=2[a][b],[a]scale=620x480[aa],[b]waveform=intensity=0.1:mode=column:mirror=1:c=1:f=lowpass:e=instant:graticule=green:flags=numbers+dots,scale=620x480[bb],[aa][bb]hstack[out0]"')
+  system('.\\ffmpeg -f dshow -pixel_format yuyv422 -i video="Osprey-827e MFI Video Device 1":audio="Unbal Input 1 (Osprey-827e 1)" -f nut -c:v h264 -vf setsar=40/27,setdar=4/3 - | .\\ffplay -')
 end
 
 def recordVideo()
