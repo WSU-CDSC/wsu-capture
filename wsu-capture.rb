@@ -28,6 +28,10 @@ def recordVideo()
 	end
 end
 
+def editSettings()
+  system('ffmpeg -show_video_device_dialog true -f dshow -i video="Osprey-827e MFI Video Device 1" -t 0.1 -f null -')
+end
+
 def openDocs()
   if Gem.win_platform?
     system("start https://github.com/WSU-CDSC/wsu-capture/blob/master/Instructions.md")
@@ -45,6 +49,7 @@ $window.image("https://brand.wsu.edu/wp-content/themes/brand/images/pages/logos/
 $window.title("Welcome to WSU-Capture")
 $window.button("Open Help") { openDocs() }
 $window.button("Choose Save Location") { getOutputDir() }
+$window.button("Capture Card Settings") { editSettings() }
 $window.button("Preview Video") { previewVideo() }
 $window.button("Record Video") { recordVideo() }
 $window.wait_until_closed
