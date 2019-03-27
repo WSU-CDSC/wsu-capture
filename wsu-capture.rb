@@ -11,7 +11,7 @@ def getOutputDir()
 end
 
 def previewVideo()
-  system('.\\ffplay -f dshow -pixel_format yuv420p -i video="Osprey-827e MFI Video Device 1" -vf setsar=40/27,setdar=4/3,split=2[a][b],[b]format=pix_fmts=yuv420p,waveform=intensity=0.1:mode=column:mirror=1:c=1:f=lowpass:e=instant:graticule=green:flags=numbers+dots,scale=720x480[bb],[a][bb]hstack')
+  system('.\\ffplay -f dshow -pixel_format yuv420p -i video="Logitech HD Webcam C615" -vf setsar=40/27,setdar=4/3,split=2[a][b],[b]format=pix_fmts=yuv420p,waveform=intensity=0.1:mode=column:mirror=1:c=1:f=lowpass:e=instant:graticule=green:flags=numbers+dots,scale=720x480[bb],[a][bb]hstack')
 end
 
 def recordVideo()
@@ -21,15 +21,19 @@ def recordVideo()
   end
   outputFileName = $window.gets("Please Enter Output Name")
   outputFile = @outputDir + outputFileName + '.mkv'
+  derivativeFile = @outputDir + outputFileName + '.mp4'
   if File.exist?(outputFile)
     $window.alert("A file with that name already exists!")
   else
-    system('.\\ffmpeg -f dshow -pixel_format yuyv422 -i video="Osprey-827e MFI Video Device 1":audio="Unbal Input 1 (Osprey-827e 1)" -color_primaries smpte170m -color_trc bt709 -colorspace smpte170m -c:a pcm_s24le -c:v ffv1 -level 3 -g 1 -slices 16 -slicecrc 1 -vf setsar=40/27,setdar=4/3,setfield=bff,fieldorder=bff -y ' + '"' + outputFile + '"' + ' -f nut -vf setsar=40/27,setdar=4/3 - | .\\ffplay -')
+    system('.\\ffmpeg -f dshow -pixel_format yuv420p -i video="Logitech HD Webcam C615" -color_primaries smpte170m -color_trc bt709 -colorspace smpte170m -c:a pcm_s24le -c:v ffv1 -level 3 -g 1 -slices 16 -slicecrc 1 -vf setsar=40/27,setdar=4/3,setfield=bff,fieldorder=bff -y ' + '"' + outputFile + '"' + ' -f nut -vf setsar=40/27,setdar=4/3 -async 1 -vsync 1 - | .\\ffplay -')
+    $window.alert("Making Derivatives")
+    system('.\\ffmpeg -i ' + '"' + outputFile + '"' + ' -c:v libx264 -c:a aac -movflags +faststart -crf 18 -b:a 128k -preset fast -vf "yadif,format=yuv420p" ' + derivativeFile)
+    $window.alert("Derivatives Finished!")
   end
 end
 
 def editSettings()
-  system('.\\ffmpeg -show_video_device_dialog true -f dshow -i video="Osprey-827e MFI Video Device 1" -t 0.1 -f null -')
+  system('.\\ffmpeg -show_video_device_dialog true -f dshow -i video="Logitech HD Webcam C615" -t 0.1 -f null -')
 end
 
 def openDocs()
@@ -55,5 +59,8 @@ $window.button("Record Video") { recordVideo() }
 $window.wait_until_closed
 
 # Osprey Command
-# ffmpeg -f dshow -pixel_format yuyv422 -i video="Osprey-827e MFI Video Device 1":audio="Unbal Input 1 (Osprey-827e 1)" -color_primaries smpte170m -color_trc bt709 -colorspace smpte170m -c:a pcm_s24le -c:v ffv1 -level 3 -g 1 -slices 16 -slicecrc 1 -vf setsar=40/27,setdar=4/3,setfield=bff,fieldorder=bff -y OUTPUT -f nut -vf setsar=40/27,setdar=4/3 - | ffplay -
 # testing cam device Logitech HD Webcam C615
+# Actual Devices
+# video - Osprey-827e MFI Video Device 1
+# audio - Unbal Input 1 (Osprey-827e 1)
+# Actual pix_fmt -pixel_format yuyv422
