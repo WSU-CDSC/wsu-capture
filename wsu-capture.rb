@@ -56,6 +56,7 @@ $window.button("Choose Save Location") { getOutputDir() }
 $window.button("Capture Card Settings") { editSettings() }
 $window.button("Preview Video") { previewVideo() }
 $window.button("Record Video") { recordVideo() }
+$window.checkbox("Film Source")
 $window.wait_until_closed
 
 # Osprey Command
