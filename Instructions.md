@@ -1,12 +1,10 @@
 # Welcome to WSU-Capture!
 
 ## Overview
-This tool is coded to allow our capture card to create high-quality video transfers. It will create an archival master in the FFV1/Matroska format as well as an access MP4.
-
-
- <img src="/main-gui.png" alt="Main screen for WSU-Capture" width="350">
+This is designed to simplify our workflow for video transfers while also creating files that are both high quality and archivally sound. The tool is hard coded to control our Osprey video capture device, and will create two files for each capture: an [MKV/FFV1](https://www.loc.gov/preservation/digital/formats/fdd/fdd000343.shtml) archival quality file and an MP4 access file.
 
 ## Usage
+<img src="/main-gui.png" alt="Main screen for WSU-Capture" width="350">
 
 * Choose Save Location: This is where WSU-Capture will save the video files you are capturing. This must be selected at the start of every new session.
 * Capture Card Settings: This will open the settings for the capture card. This should not usually need to be adjusted.
