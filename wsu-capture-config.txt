@@ -1,0 +1,4 @@
+# Change values in this file to set values used by WSU-Capture
+
+Ffmpeg_path = '.\\'
+
