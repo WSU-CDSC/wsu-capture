@@ -28,7 +28,11 @@ def recordVideo()
   else
     system(Ffmpeg_path +  'ffmpeg -f dshow -pixel_format yuv420p -i video="' + Video_input + ':audio=' + Audio_input + '" -color_primaries smpte170m -color_trc bt709 -colorspace smpte170m -c:a pcm_s24le -c:v ffv1 -level 3 -g 1 -slices 16 -slicecrc 1 -vf setsar=40/27,setdar=4/3,setfield=bff,fieldorder=bff -y ' + '"' + outputFile + '"' + ' -f nut -vf setsar=40/27,setdar=4/3 -async 1 -vsync 1 - | ' + Ffmpeg_path + 'ffplay -')
     $window.alert("Making Derivatives")
-    system(Ffmpeg_path + 'ffmpeg -i ' + '"' + outputFile + '"' + ' -c:v libx264 -c:a aac -movflags +faststart -crf 18 -b:a 128k -preset fast -vf "yadif,format=yuv420p" ' + derivativeFile)
+    if $film_source
+        system(Ffmpeg_path + 'ffmpeg -i ' + '"' + outputFile + '"' + ' -c:v libx264 -c:a aac -movflags +faststart -crf 18 -b:a 128k -preset fast -vf "fieldmatch,yadif,decimate,format=yuv420p" ' + derivativeFile)
+    else
+        system(Ffmpeg_path + 'ffmpeg -i ' + '"' + outputFile + '"' + ' -c:v libx264 -c:a aac -movflags +faststart -crf 18 -b:a 128k -preset fast -vf "yadif,format=yuv420p" ' + derivativeFile)
+    end
     $window.alert("Derivatives Finished!")
   end
 end
@@ -57,7 +61,7 @@ $window.button("Choose Save Location") { getOutputDir() }
 $window.button("Capture Card Settings") { editSettings() }
 $window.button("Preview Video") { previewVideo() }
 $window.button("Record Video") { recordVideo() }
-$window.checkbox("Film Source")
+$film_source = $window.checkbox("Film Source")
 $window.wait_until_closed
 
 # Osprey Command
