@@ -1,4 +1,8 @@
-# Change values in this file to set values used by WSU-Capture
+# Change values between the single quotes to set values used by WSU-Capture
+# FFmpeg command to list available capture devices: ffmpeg -list_devices true -f dshow -i dummy
+# FFmpeg DirectShow device docs: http://ffmpeg.org/ffmpeg-devices.html#dshow
+# Default values for WSU: Video- Osprey-827e MFI Video Device 1, Audio- Unbal Input 1 (Osprey-827e 1)
 
 Ffmpeg_path = '.\\'
-
+Video_input = 'Osprey-827e MFI Video Device 1'
+Audio_input = 'Unbal Input 1 (Osprey-827e 1)'
