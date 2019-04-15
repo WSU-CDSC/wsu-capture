@@ -16,7 +16,7 @@ def previewVideo()
 end
 
 def recordVideo()
-  if @outputDir.nil?
+  if (@outputDir.nil? || @outputDir == '/' || @outputDir == '\\')
     $window.alert("Please select an output location!")
     getOutputDir()
   end
