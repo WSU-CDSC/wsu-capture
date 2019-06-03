@@ -62,17 +62,17 @@ def derivativeWindow()
   $film_source = $new_window.checkbox("Film Source")
 end
 
-def makeDerivatives(derivative_target)
-  targets = Dir.glob("#{derivative_target}/*.mkv")
+def makeDerivatives(derivDir)
+  targets = Dir.glob("#{derivDir}".tr('\\','/') + "*.mkv")
   unless targets.empty?
     $new_window.alert("Making Derivatives")
     targets.each do |masterFile|
       fileBaseName = File.basename(masterFile,".*")
-      derivativeFile = derivative_target + fileBaseName + '.mp4'
+      derivativeFile = derivDir + fileBaseName + '.mp4'
       if $film_source == true
-          system(Ffmpeg_path + 'ffmpeg -i ' + '"' + masterFile + '"' + ' -c:v libx264 -c:a aac -movflags +faststart -crf 18 -b:a 128k -preset fast -vf "fieldmatch,yadif,decimate,format=yuv420p" ' + derivativeFile)
+          system(Ffmpeg_path + 'ffmpeg -i ' + '"' + masterFile + '"' + ' -c:v libx264 -c:a aac -movflags +faststart -crf 18 -b:a 128k -preset fast -vf "fieldmatch,yadif,decimate,format=yuv420p" ' + '"' + derivativeFile + '"')
       else
-          system(Ffmpeg_path + 'ffmpeg -i ' + '"' + masterFile + '"' + ' -c:v libx264 -c:a aac -movflags +faststart -crf 18 -b:a 128k -preset fast -vf "yadif,format=yuv420p" ' + derivativeFile)
+          system(Ffmpeg_path + 'ffmpeg -i ' + '"' + masterFile + '"' + ' -c:v libx264 -c:a aac -movflags +faststart -crf 18 -b:a 128k -preset fast -vf "yadif,format=yuv420p" ' + '"' + derivativeFile + '"')
       end
     end
     $new_window.alert("Derivatives Finished!")
