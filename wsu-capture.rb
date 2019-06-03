@@ -11,6 +11,14 @@ def getOutputDir()
   end
 end
 
+def getDerivDir()
+  if Gem.win_platform?
+    derivDir = `powershell "Add-Type -AssemblyName System.windows.forms|Out-Null;$f=New-Object System.Windows.Forms.FolderBrowserDialog;$f.SelectedPath = 'C:\';$f.Description = 'Select Output Directory';$f.ShowDialog((New-Object System.Windows.Forms.Form -Property @{TopMost = $true }))|Out-Null;$f.SelectedPath"`.strip + '\\'
+  else
+    derivDir = `zenity --file-selection --directory`.strip + '/'
+  end
+end
+
 def previewVideo()
   system(Ffmpeg_path + 'ffplay -f dshow -pixel_format yuv420p -i video="' + Video_input + ':audio=' + Audio_input + '" -vf setsar=40/27,setdar=4/3,split=2[a][b],[b]format=pix_fmts=yuv420p,waveform=intensity=0.1:mode=column:mirror=1:c=1:f=lowpass:e=instant:graticule=green:flags=numbers+dots,scale=720x480[bb],[a][bb]hstack')
 end
@@ -22,18 +30,10 @@ def recordVideo()
   end
   outputFileName = $window.gets("Please Enter Output Name")
   outputFile = @outputDir + outputFileName + '.mkv'
-  derivativeFile = @outputDir + outputFileName + '.mp4'
   if File.exist?(outputFile)
     $window.alert("A file with that name already exists!")
   else
     system(Ffmpeg_path +  'ffmpeg -f dshow -pixel_format yuv420p -i video="' + Video_input + ':audio=' + Audio_input + '" -color_primaries smpte170m -color_trc bt709 -colorspace smpte170m -c:a pcm_s24le -c:v ffv1 -level 3 -g 1 -slices 16 -slicecrc 1 -vf setsar=40/27,setdar=4/3,setfield=bff,fieldorder=bff -y ' + '"' + outputFile + '"' + ' -f nut -c:v mpeg4 -qscale 11 -vf setsar=40/27,setdar=4/3 -async 1 -vsync 1 - | ' + Ffmpeg_path + 'ffplay -')
-    $window.alert("Making Derivatives")
-    if $film_source == true
-        system(Ffmpeg_path + 'ffmpeg -i ' + '"' + outputFile + '"' + ' -c:v libx264 -c:a aac -movflags +faststart -crf 18 -b:a 128k -preset fast -vf "fieldmatch,yadif,decimate,format=yuv420p" ' + derivativeFile)
-    else
-        system(Ffmpeg_path + 'ffmpeg -i ' + '"' + outputFile + '"' + ' -c:v libx264 -c:a aac -movflags +faststart -crf 18 -b:a 128k -preset fast -vf "yadif,format=yuv420p" ' + derivativeFile)
-    end
-    $window.alert("Derivatives Finished!")
   end
 end
 
@@ -51,6 +51,34 @@ def openDocs()
   end
 end
 
+def derivativeWindow()
+  $new_window = Flammarion::Engraving.new
+  $new_window.image("https://brand.wsu.edu/wp-content/themes/brand/images/pages/logos/wsu-shield-mark.svg")
+  $new_window.title("Make Derivatives")
+  $new_window.button("Select Files for Transcode") { 
+  derivDir = getDerivDir()
+  makeDerivatives(derivDir)
+  }
+  $film_source = $new_window.checkbox("Film Source")
+end
+
+def makeDerivatives(derivative_target)
+  targets = Dir.glob("#{derivative_target}/*.mkv")
+  unless targets.empty?
+    $new_window.alert("Making Derivatives")
+    targets.each do |masterFile|
+      fileBaseName = File.basename(masterFile,".*")
+      derivativeFile = derivative_target + fileBaseName + '.mp4'
+      if $film_source == true
+          system(Ffmpeg_path + 'ffmpeg -i ' + '"' + masterFile + '"' + ' -c:v libx264 -c:a aac -movflags +faststart -crf 18 -b:a 128k -preset fast -vf "fieldmatch,yadif,decimate,format=yuv420p" ' + derivativeFile)
+      else
+          system(Ffmpeg_path + 'ffmpeg -i ' + '"' + masterFile + '"' + ' -c:v libx264 -c:a aac -movflags +faststart -crf 18 -b:a 128k -preset fast -vf "yadif,format=yuv420p" ' + derivativeFile)
+      end
+    end
+    $new_window.alert("Derivatives Finished!")
+  end
+end
+
 # Create GUI Window
 
 $window = Flammarion::Engraving.new
@@ -61,7 +89,7 @@ $window.button("Choose Save Location") { getOutputDir() }
 $window.button("Capture Card Settings") { editSettings() }
 $window.button("Preview Video") { previewVideo() }
 $window.button("Record Video") { recordVideo() }
-$film_source = $window.checkbox("Film Source")
+$window.button("Make Derivatives") { derivativeWindow() }
 $window.wait_until_closed
 
 # Osprey Command
